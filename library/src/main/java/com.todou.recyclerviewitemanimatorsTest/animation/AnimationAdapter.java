@@ -2,6 +2,8 @@ package com.todou.recyclerviewitemanimatorsTest.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.os.SystemClock;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +33,14 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     private int mLastPosition = -1;
 
     private boolean isFirstOnly = true;
+    private RecyclerView mRecyclerView;
 
     public AnimationAdapter(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
         mAdapter = adapter;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        mRecyclerView = recyclerView;
     }
 
     @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -63,6 +70,33 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
         } else {
             ViewHelper.clear(holder.itemView);
         }
+    }
+
+    private int calculateAnimationDelay(final int position) {
+        int delay;
+        delay = mDuration / 5;
+        int lastVisiblePosition = 0;
+        int firstVisiblePosition = 0;
+        if (mRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager)mRecyclerView.getLayoutManager();
+            lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+            firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+        }
+
+        int numberOfItemsOnScreen = lastVisiblePosition - firstVisiblePosition;
+        int numberOfAnimatedItems = position - 1 - mLastPosition;
+
+        if (numberOfItemsOnScreen + 1 < numberOfAnimatedItems) {
+
+            /*if (mListViewWrapper.getListView() instanceof GridView && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                int numColumns = ((GridView) mListViewWrapper.getListView()).getNumColumns();
+                delay += mAnimationDelayMillis * (position % numColumns);
+            }*/
+        } else {
+           //int delaySinceStart = (position - mFirstAnimatedPosition) * mAnimationDelayMillis;
+            //delay = Math.max(0, (int) (-SystemClock.uptimeMillis() + mAnimationStartMillis + mInitialDelayMillis + delaySinceStart));
+        }
+        return delay;
     }
 
     @Override public int getItemCount() {
