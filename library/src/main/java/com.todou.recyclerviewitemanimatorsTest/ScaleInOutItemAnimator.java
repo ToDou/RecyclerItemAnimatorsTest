@@ -28,8 +28,8 @@ public class ScaleInOutItemAnimator extends BaseItemAnimator {
 
     private float DEFAULT_SCALE_INITIAL = 0.6f;
 
-    private float mInitialScaleX = DEFAULT_SCALE_INITIAL;
-    private float mInitialScaleY = DEFAULT_SCALE_INITIAL;
+    private float mInitialScaleX = 0;
+    private float mInitialScaleY = 0;
 
     private float mEndScaleX = DEFAULT_SCALE_INITIAL;
     private float mEndScaleY = DEFAULT_SCALE_INITIAL;
@@ -66,8 +66,6 @@ public class ScaleInOutItemAnimator extends BaseItemAnimator {
         ViewCompat.setScaleY(holder.itemView, mInitialScaleY);
     }
 
-
-
     protected void animateAddImpl(final RecyclerView.ViewHolder holder) {
         final View view = holder.itemView;
 
@@ -87,7 +85,7 @@ public class ScaleInOutItemAnimator extends BaseItemAnimator {
                         mAddAnimations.remove(holder);
                         dispatchFinishedWhenDone();
                     }
-                }).start();
+                }).setStartDelay(500).start();
         mAddAnimations.add(holder);
     }
 
@@ -119,6 +117,7 @@ public class ScaleInOutItemAnimator extends BaseItemAnimator {
 
     @Override
     public boolean animateChange(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder viewHolder1, int i, int i1, int i2, int i3) {
-        return false;
+        boolean s = false;
+        return s;
     }
 }
