@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import java.util.ArrayList;
-
 /**
  * Copyright (C) 2015 Wasabeef
  *
@@ -33,11 +31,9 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     private int mLastPosition = -1;
 
     private boolean isFirstOnly = true;
-    private ArrayList<Integer> runningPosition;
 
     public AnimationAdapter(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
         mAdapter = adapter;
-        runningPosition = new ArrayList<>();
     }
 
     @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -47,23 +43,18 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     @Override public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         mAdapter.onBindViewHolder(holder, position);
         if (!isFirstOnly || position > mLastPosition) {
-            holder.itemView.setVisibility(View.GONE);
-            runningPosition.add(new Integer(position));
             for (Animator anim : getAnimators(holder.itemView)) {
-                anim.setDuration(mDuration).setStartDelay(mDuration / 10 * runningPosition.size());
+                anim.setDuration(mDuration);
                 anim.start();
                 anim.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
-                        holder.itemView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        runningPosition.remove(new Integer(position));
-                        holder.itemView.setVisibility(View.VISIBLE);
                     }
                 });
                 anim.setInterpolator(mInterpolator);

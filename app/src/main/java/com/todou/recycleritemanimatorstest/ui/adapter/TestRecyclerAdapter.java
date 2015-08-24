@@ -18,7 +18,6 @@ public class TestRecyclerAdapter extends RecyclerViewAdapter<String> {
     public void bindView(String data, int i, RecyclerView.ViewHolder viewHolder) {
         TextViewHolder holder = (TextViewHolder) viewHolder;
         holder.bindView(data);
-        holder.itemView.setVisibility(View.GONE);
     }
 
     @Override
