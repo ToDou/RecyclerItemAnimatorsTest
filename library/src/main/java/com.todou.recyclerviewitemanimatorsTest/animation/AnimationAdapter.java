@@ -2,13 +2,17 @@ package com.todou.recyclerviewitemanimatorsTest.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.nfc.Tag;
 import android.os.SystemClock;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+
+import java.util.ArrayList;
 
 /**
  * Copyright (C) 2015 Wasabeef
@@ -26,6 +30,7 @@ import android.view.animation.LinearInterpolator;
  * limitations under the License.
  */
 public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final static String TAG = "AnimationAdapter";
 
     private RecyclerView.Adapter<RecyclerView.ViewHolder> mAdapter;
     private int mDuration = 300;
@@ -34,9 +39,11 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
 
     private boolean isFirstOnly = true;
     private RecyclerView mRecyclerView;
+    private ArrayList<Integer> runningPosition;
 
     public AnimationAdapter(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
         mAdapter = adapter;
+        runningPosition = new ArrayList<>();
     }
 
     public void setRecyclerView(RecyclerView recyclerView) {
@@ -50,18 +57,26 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     @Override public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         mAdapter.onBindViewHolder(holder, position);
         if (!isFirstOnly || position > mLastPosition) {
+            holder.itemView.setVisibility(View.GONE);
+            runningPosition.add(new Integer(position));
+            Log.e(TAG, position + "");
             for (Animator anim : getAnimators(holder.itemView)) {
                 anim.setDuration(mDuration);
+                anim.setStartDelay(mDuration / 5 * (runningPosition.size() - 1));
                 anim.start();
                 anim.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
+                        holder.itemView.setVisibility(View.VISIBLE);
+
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
+                        holder.itemView.setVisibility(View.VISIBLE);
+                        runningPosition.remove(new Integer(position));
                     }
                 });
                 anim.setInterpolator(mInterpolator);
